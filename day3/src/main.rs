@@ -6,11 +6,14 @@ fn main() {
     println!("{:?}", part2(input));
 }
 
-
 fn part1(input: &str) -> usize {
-    input.lines()
+    input
+        .lines()
         .map(|line| {
-            let digits = line.chars().map(|c| c.to_digit(10).unwrap() as usize).collect::<Vec<usize>>();
+            let digits = line
+                .chars()
+                .map(|c| c.to_digit(10).unwrap() as usize)
+                .collect::<Vec<usize>>();
             let mut max = usize::MIN;
             for left in 0..digits.len() {
                 for right in left + 1..digits.len() {
@@ -35,21 +38,27 @@ fn search(digits: &[usize], length: usize) -> usize {
     let right = digits.len() - length;
     let mut max = usize::MIN;
     for left in 0..=right {
-        max = max.max(digits[left] * 10usize.pow((length - 1) as u32) + search(&digits[left+1..], length - 1));
+        max = max.max(
+            digits[left] * 10usize.pow((length - 1) as u32)
+                + search(&digits[left + 1..], length - 1),
+        );
     }
     max
 }
 
 fn part2(input: &str) -> usize {
-    input.lines()
+    input
+        .lines()
         .map(|line| {
-            let digits = line.chars().map(|c| c.to_digit(10).unwrap() as usize).collect::<Vec<usize>>();
+            let digits = line
+                .chars()
+                .map(|c| c.to_digit(10).unwrap() as usize)
+                .collect::<Vec<usize>>();
             let max = search(&digits, 12);
             max
         })
         .sum()
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -69,7 +78,6 @@ mod tests {
         assert_eq!(part1(input), 357);
     }
 
-
     #[test]
     fn test_part2() {
         let input = indoc! {
@@ -80,5 +88,6 @@ mod tests {
             818181911112111
             "#
         };
-        assert_eq!(part2(input), 3121910778619);    }
+        assert_eq!(part2(input), 3121910778619);
+    }
 }

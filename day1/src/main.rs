@@ -17,10 +17,10 @@ fn part1(input: &str) -> i32 {
 
         let step = match dir_str {
             "L" => -steps,
-            "R" =>  steps,
+            "R" => steps,
             _ => unreachable!("invalid direction"),
         };
-            
+
         pos = (pos + step).rem_euclid(MOD);
         if pos == 0 {
             count += 1;
@@ -29,7 +29,6 @@ fn part1(input: &str) -> i32 {
 
     count
 }
-
 
 fn part2(input: &str) -> i16 {
     let mut pos = START_POINT;
@@ -41,7 +40,7 @@ fn part2(input: &str) -> i16 {
 
         let step = match dir_str {
             "L" => -1,
-            "R" =>  1,
+            "R" => 1,
             _ => unreachable!("invalid direction"),
         };
 
@@ -55,7 +54,6 @@ fn part2(input: &str) -> i16 {
 
     count
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -81,9 +79,8 @@ mod tests {
         assert_eq!(3, part1(input));
     }
 
-
     #[test]
-    fn test_part2() { 
+    fn test_part2() {
         let input = indoc! {
             r#"
             L68

@@ -6,25 +6,26 @@ fn main() {
     println!("{:?}", part2(input));
 }
 
-
-
-
 fn part1(input: &str) -> usize {
     input
         .trim()
         .split(',')
         .map(|range| range.split('-').collect_tuple().unwrap())
-        .map(|(a, b)| (a.parse::<usize>().unwrap(), b.parse::<usize>().unwrap()))
-        .map(|(start, end)| 
-            (start..=end).map(|n| {
-                let n_str = n.to_string();
-                let (left, right) = n_str.split_at(n_str.len() / 2);
-                if left == right {
-                    return n;
-                }
-                0
-            }).sum::<usize>()
-        )
+        .map(|(a, b)| {
+            (a.parse::<usize>().unwrap(), b.parse::<usize>().unwrap())
+        })
+        .map(|(start, end)| {
+            (start..=end)
+                .map(|n| {
+                    let n_str = n.to_string();
+                    let (left, right) = n_str.split_at(n_str.len() / 2);
+                    if left == right {
+                        return n;
+                    }
+                    0
+                })
+                .sum::<usize>()
+        })
         .sum()
 }
 
@@ -43,31 +44,32 @@ fn is_invalid(n: usize) -> bool {
             .windows(2)
             .all(|window| window[0] == window[1]);
         if same {
-            return true
+            return true;
         }
     }
     false
 }
 
-
 fn part2(input: &str) -> usize {
-        input
+    input
         .trim()
         .split(',')
         .map(|range| range.split('-').collect_tuple().unwrap())
-        .map(|(a, b)| (a.parse::<usize>().unwrap(), b.parse::<usize>().unwrap()))
-        .map(|(start, end)| 
-            (start..=end).map(|n| {
-                if is_invalid(n) {
-                    return n;
-                }
-                0
-            }).sum::<usize>()
-        )
+        .map(|(a, b)| {
+            (a.parse::<usize>().unwrap(), b.parse::<usize>().unwrap())
+        })
+        .map(|(start, end)| {
+            (start..=end)
+                .map(|n| {
+                    if is_invalid(n) {
+                        return n;
+                    }
+                    0
+                })
+                .sum::<usize>()
+        })
         .sum()
-    
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -83,7 +85,6 @@ mod tests {
         };
         assert_eq!(part1(input), 1227775554);
     }
-
 
     #[test]
     fn test_part2() {
