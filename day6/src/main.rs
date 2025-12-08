@@ -57,7 +57,7 @@ fn part2(input: &str) -> usize {
         })
         .collect();
 
-    let max_lens: Vec<usize> = input
+    let filled_signs: Vec<char> = input
         .iter()
         .map(|line| line.split_ascii_whitespace().collect())
         .fold(vec![0; inits.len()], |mut acc, nums_str: Vec<&str>| {
@@ -67,12 +67,57 @@ fn part2(input: &str) -> usize {
                 }
             }
             acc
+        })
+        .iter()
+        .enumerate()
+        .fold(String::new(), |mut acc, (index, gap)| {
+            acc.push_str(&*String::from(signs[index].repeat(*gap)));
+            acc.push_str(" ");
+            acc
+        })
+        .chars()
+        .collect();
+
+    let input = input
+        .iter()
+        .map(|line| line.chars().collect::<Vec<char>>())
+        .collect::<Vec<Vec<char>>>();
+
+    let mut total = 0;
+    let mut acc: Option<usize> = None;
+    for (j, &op) in filled_signs.iter().enumerate() {
+        if op == ' ' {
+            if let Some(value) = acc.take() {
+                total += value;
+            }
+            continue;
+        }
+
+        if acc.is_none() {
+            acc = Some(match op {
+                '+' => 0,
+                '*' => 1,
+                _ => panic!("unexpected operator"),
+            });
+        }
+
+        let n = (0..input.len())
+            .fold(String::new(), |mut acc, i| {
+                acc.push(*input[i].get(j).unwrap_or(&' '));
+                acc
+            })
+            .trim()
+            .parse::<usize>()
+            .unwrap();
+
+        acc = Some(match op {
+            '+' => acc.unwrap() + n,
+            '*' => acc.unwrap() * n,
+            _ => unreachable!(),
         });
-    
-    println!("{:?}", max_lens); 
+    }
 
-
-    4277556
+    total
 }
 
 #[cfg(test)]
@@ -98,11 +143,11 @@ mod tests {
         let input = indoc! {
             r#"
             123 328  51 64
-            45 64  387 23
-            6 98  215 314
+             45 64  387 23
+              6 98  215 314
             *   +   *   +   
             "#
         };
-        assert_eq!(part2(input), 4277556);
+        assert_eq!(part2(input), 3263827);
     }
 }
