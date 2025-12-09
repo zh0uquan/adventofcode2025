@@ -106,6 +106,19 @@ impl<T: Clone + Default> Matrix<T> {
     }
 }
 
+pub trait Inbound {
+    fn inbound<T>(&self, matrix: &Matrix<T>) -> bool;
+}
+
+impl Inbound for Coord {
+    
+    fn inbound<T>(&self, matrix: &Matrix<T>) -> bool {
+        self.0 < matrix.height && self.1 < matrix.width
+
+    }
+}
+
+
 impl<T: Clone + Default + Display> Display for Matrix<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         for row in &self.matrix {
