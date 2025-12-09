@@ -22,7 +22,7 @@ fn main() {
     println!("{:?}", part2(input));
 }
 
-fn part1(input: &str, n: usize) -> usize {
+fn get_distances(input: &str) -> Vec<(Coord, Coord, f64)> {
     let input: Vec<Coord> = input
         .lines()
         .map(|line| {
@@ -38,8 +38,11 @@ fn part1(input: &str, n: usize) -> usize {
         .map(|(a, b)| (*a, *b, a.distance(b)))
         .sorted_by(|i1, i2| i1.2.total_cmp(&i2.2))
         .collect();
+    distances
+}
 
-    let distances = &distances[..n];
+fn part1(input: &str, n: usize) -> usize {
+    let distances = &get_distances(input)[..n];
 
     let mut nodes: HashMap<Coord, HashSet<Coord>> = HashMap::new();
     for (a, b, _) in distances {
@@ -71,22 +74,7 @@ fn part1(input: &str, n: usize) -> usize {
 }
 
 fn part2(input: &str) -> usize {
-    let input: Vec<Coord> = input
-        .lines()
-        .map(|line| {
-            line.split(",")
-                .map(|coord| coord.parse::<usize>().unwrap())
-                .collect::<Vec<_>>()
-        })
-        .map(|coords| (coords[0], coords[1], coords[2]))
-        .collect();
-
-    let distances: Vec<(Coord, Coord, f64)> = input
-        .iter()
-        .tuple_combinations()
-        .map(|(a, b)| (*a, *b, a.distance(b)))
-        .sorted_by(|i1, i2| i1.2.total_cmp(&i2.2))
-        .collect();
+    let distances = get_distances(input);
 
     let mut nodes: HashMap<Coord, HashSet<Coord>> = HashMap::new();
     let mut multiply = 0;
