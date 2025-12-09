@@ -1,24 +1,20 @@
-use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
+use std::collections::{HashMap, HashSet};
 
 type Coord = (usize, usize, usize);
 
-
 trait Distance {
-
     fn distance(&self, other: &Self) -> f64;
 }
 
 impl Distance for Coord {
-
     fn distance(&self, other: &Self) -> f64 {
         let dx = self.0 as f64 - other.0 as f64;
         let dy = self.1 as f64 - other.1 as f64;
         let dz = self.2 as f64 - other.2 as f64;
-        (dx*dx + dy*dy + dz*dz).sqrt()
+        (dx * dx + dy * dy + dz * dz).sqrt()
     }
 }
-
 
 fn main() {
     let input = include_str!("input.txt");
@@ -27,12 +23,15 @@ fn main() {
 }
 
 fn part1(input: &str, n: usize) -> usize {
-    let input: Vec<Coord> =
-        input
-            .lines()
-            .map(|line| line.split(",").map(|coord| coord.parse::<usize>().unwrap()).collect::<Vec<_>>())
-            .map(|coords| (coords[0], coords[1], coords[2]))
-            .collect();
+    let input: Vec<Coord> = input
+        .lines()
+        .map(|line| {
+            line.split(",")
+                .map(|coord| coord.parse::<usize>().unwrap())
+                .collect::<Vec<_>>()
+        })
+        .map(|coords| (coords[0], coords[1], coords[2]))
+        .collect();
     let distances: Vec<(Coord, Coord, f64)> = input
         .iter()
         .tuple_combinations()
@@ -68,29 +67,27 @@ fn part1(input: &str, n: usize) -> usize {
         .sorted_by(|a, b| b.cmp(a))
         .collect::<Vec<_>>();
 
-    unique_sizes
-        .iter()
-        .take(3)
-        .product()
-
+    unique_sizes.iter().take(3).product()
 }
 
+fn part2(input: &str) -> usize {
+    let input: Vec<Coord> = input
+        .lines()
+        .map(|line| {
+            line.split(",")
+                .map(|coord| coord.parse::<usize>().unwrap())
+                .collect::<Vec<_>>()
+        })
+        .map(|coords| (coords[0], coords[1], coords[2]))
+        .collect();
 
-fn part2(input: &str) -> usize{
-    let input: Vec<Coord> =
-        input
-            .lines()
-            .map(|line| line.split(",").map(|coord| coord.parse::<usize>().unwrap()).collect::<Vec<_>>())
-            .map(|coords| (coords[0], coords[1], coords[2]))
-            .collect(); 
-    
     let distances: Vec<(Coord, Coord, f64)> = input
         .iter()
         .tuple_combinations()
         .map(|(a, b)| (*a, *b, a.distance(b)))
         .sorted_by(|i1, i2| i1.2.total_cmp(&i2.2))
         .collect();
-    
+
     let mut nodes: HashMap<Coord, HashSet<Coord>> = HashMap::new();
     let mut multiply = 0;
     for (a, b, _) in distances.iter() {
@@ -100,7 +97,7 @@ fn part2(input: &str) -> usize{
             continue;
         }
         multiply = a.0 * b.0;
-        
+
         let mut union: HashSet<Coord> = set_a.union(&set_b).cloned().collect();
         union.insert(*a);
         union.insert(*b);
@@ -109,10 +106,9 @@ fn part2(input: &str) -> usize{
             nodes.insert(*node, union.clone());
         }
     }
-    
+
     multiply
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -148,5 +144,4 @@ mod tests {
         assert_eq!(part1(input, 10), 40);
         assert_eq!(part2(input), 25272);
     }
-
 }

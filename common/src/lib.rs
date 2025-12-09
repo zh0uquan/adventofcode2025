@@ -111,13 +111,10 @@ pub trait Inbound {
 }
 
 impl Inbound for Coord {
-    
     fn inbound<T>(&self, matrix: &Matrix<T>) -> bool {
         self.0 < matrix.height && self.1 < matrix.width
-
     }
 }
-
 
 impl<T: Clone + Default + Display> Display for Matrix<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
