@@ -81,7 +81,7 @@ fn part2(input: &str) -> usize {
     for (a, b, _) in distances.iter() {
         let set_a = nodes.entry(*a).or_default().clone();
         let set_b = nodes.entry(*b).or_default().clone();
-        if set_a.contains(&b) {
+        if set_a.contains(b) {
             continue;
         }
         multiply = a.0 * b.0;

@@ -1,4 +1,3 @@
-use itertools::{enumerate, Itertools};
 
 fn main() {
     let input = include_str!("input.txt");
@@ -31,7 +30,7 @@ fn part1(input: &str) -> usize {
         })
         .fold(inits, |acc, nums| {
             acc.into_iter()
-                .zip(nums.into_iter())
+                .zip(nums)
                 .enumerate()
                 .map(|(idx, (a, b))| match signs[idx] {
                     "*" => a * b,
@@ -71,8 +70,8 @@ fn part2(input: &str) -> usize {
         .iter()
         .enumerate()
         .fold(String::new(), |mut acc, (index, gap)| {
-            acc.push_str(&*String::from(signs[index].repeat(*gap)));
-            acc.push_str(" ");
+            acc.push_str(&signs[index].repeat(*gap));
+            acc.push(' ');
             acc
         })
         .chars()

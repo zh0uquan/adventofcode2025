@@ -1,4 +1,6 @@
-use cached::proc_macro::cached;
+use good_lp::{
+    default_solver, variable, variables, Expression, Solution, SolverModel,
+};
 use nom::{
     character::complete::{char as nom_char, digit1, one_of},
     combinator::map_res,
@@ -6,7 +8,6 @@ use nom::{
     sequence::{delimited, preceded},
     IResult,
 };
-use std::cmp::Reverse;
 
 #[derive(Debug, PartialEq)]
 struct Parsed {
@@ -87,7 +88,6 @@ fn dfs(dest: &usize, current: &usize, masks: &[usize]) -> Option<usize> {
 }
 
 fn part1(input: &str) -> usize {
-    dfs(&1, &0, &vec![1]);
     input
         .lines()
         .map(|line| {
@@ -114,8 +114,51 @@ fn part1(input: &str) -> usize {
         .sum()
 }
 
+pub fn solve_buttons(a: &[Vec<i32>], b: &[i32]) -> (i32, Vec<i32>) {
+    let m = a.len();
+    let n = a[0].len();
+
+    let mut vars = variables!();
+    let x = (0..m)
+        .map(|_| vars.add(variable().integer().min(0)))
+        .collect::<Vec<_>>();
+
+    let obj: Expression = x.iter().copied().sum();
+    let mut pb = vars.minimise(obj).using(default_solver);
+
+    // A^T x = b
+    for j in 0..n {
+        let expr: Expression = (0..m).map(|i| (a[i][j] as f64) * x[i]).sum();
+        pb = pb.with(expr.eq(b[j] as f64));
+    }
+
+    let sol = pb.solve().unwrap();
+    let x_val = x.iter().map(|&v| sol.value(v) as i32).collect::<Vec<_>>();
+    let presses = x_val.iter().sum();
+    (presses, x_val)
+}
+
 fn part2(input: &str) -> usize {
-    33
+    input
+        .lines()
+        .map(|line| {
+            let (_, parsed) = parse_line(line).unwrap();
+            let mask = parsed.mask;
+            let masks: Vec<Vec<i32>> = parsed
+                .groups
+                .iter()
+                .map(|vec| {
+                    (0..mask.len())
+                        .map(|i| if vec.contains(&i) { 1 } else { 0 })
+                        .collect()
+                })
+                .collect::<Vec<_>>();
+            let values =
+                parsed.values.iter().map(|&i| i as i32).collect::<Vec<_>>();
+            let (sum, _) = solve_buttons(&masks, &values);
+            sum as usize
+        })
+        .sum()
 }
 
 #[cfg(test)]

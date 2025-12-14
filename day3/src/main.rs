@@ -54,8 +54,8 @@ fn part2(input: &str) -> usize {
                 .chars()
                 .map(|c| c.to_digit(10).unwrap() as usize)
                 .collect::<Vec<usize>>();
-            let max = search(&digits, 12);
-            max
+            
+            search(&digits, 12)
         })
         .sum()
 }

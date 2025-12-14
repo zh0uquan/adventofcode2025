@@ -13,7 +13,7 @@ fn dfs(
     matrix: &Matrix<char>,
 ) -> usize {
     let next_pos = (pos.0 + 1, pos.1);
-    if visited.contains(&next_pos) || !next_pos.inbound(&matrix) {
+    if visited.contains(&next_pos) || !next_pos.inbound(matrix) {
         return 0;
     }
     match matrix[next_pos] {

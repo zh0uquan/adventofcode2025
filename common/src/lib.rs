@@ -120,7 +120,7 @@ impl<T: Clone + Default + Display> Display for Matrix<T> {
     fn fmt(&self, f: &mut Formatter<'_>) -> std::fmt::Result {
         for row in &self.matrix {
             for cell in row.iter() {
-                write!(f, "{}", cell)?;
+                write!(f, "{cell}")?;
             }
             writeln!(f)?;
         }

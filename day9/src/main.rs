@@ -69,7 +69,7 @@ fn part2(input: &str) -> isize {
         .map(|(a, b)| (a as f64, b as f64))
         .collect();
 
-    let mut max = 0;
+    let max = 0;
     for comb in interiors.iter().combinations(2) {
         let line1 = comb[0];
         let line2 = comb[1];
@@ -86,7 +86,7 @@ fn part2(input: &str) -> isize {
         }
     }
 
-    println!("max={}", max);
+    println!("max={max}");
 
     24
 }

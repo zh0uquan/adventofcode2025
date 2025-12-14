@@ -8,4 +8,4 @@ edition = "2021"
 [dependencies]
 indoc = { workspace = true }
 nom = { workspace = true }
-cached = { workspace = true }
+good_lp = { version = "1", features = ["coin_cbc"] }
