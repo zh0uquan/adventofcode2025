@@ -8,6 +8,7 @@ use nom::{
     sequence::{delimited, preceded},
     IResult,
 };
+use std::collections::HashMap;
 
 #[derive(Debug, PartialEq)]
 struct Parsed {
