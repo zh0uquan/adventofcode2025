@@ -54,7 +54,7 @@ fn part2(input: &str) -> usize {
                 .chars()
                 .map(|c| c.to_digit(10).unwrap() as usize)
                 .collect::<Vec<usize>>();
-            
+
             search(&digits, 12)
         })
         .sum()

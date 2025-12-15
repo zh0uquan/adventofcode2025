@@ -1,5 +1,5 @@
-use std::collections::{HashMap, HashSet};
 use itertools::Itertools;
+use std::collections::{HashMap, HashSet};
 
 fn main() {
     let input = include_str!("input.txt");
@@ -7,12 +7,7 @@ fn main() {
     println!("{:?}", part2(input));
 }
 
-
-fn dfs(
-    current: &str,
-    end: &str,
-    paths: &HashMap<&str, Vec<&str>>,
-) -> usize{
+fn dfs(current: &str, end: &str, paths: &HashMap<&str, Vec<&str>>) -> usize {
     if current == end {
         return 1;
     }
@@ -22,7 +17,6 @@ fn dfs(
     }
     total
 }
-
 
 fn dfs_with_memo(
     current: &str,
@@ -37,7 +31,8 @@ fn dfs_with_memo(
         return if has_fft && has_dac { 1 } else { 0 };
     }
 
-    let mut visited_vec: Vec<_> = visited.iter().map(|s| s.to_string()).collect();
+    let mut visited_vec: Vec<_> =
+        visited.iter().map(|s| s.to_string()).collect();
     visited_vec.sort_unstable();
     let key = (current.to_string(), has_fft, has_dac, visited_vec);
 
@@ -57,7 +52,15 @@ fn dfs_with_memo(
         visited.insert(neighbor.into());
         let new_has_fft = has_fft || neighbor == "fft";
         let new_has_dac = has_dac || neighbor == "dac";
-        path_count += dfs_with_memo(neighbor, end, graph, visited, new_has_fft, new_has_dac, memo);
+        path_count += dfs_with_memo(
+            neighbor,
+            end,
+            graph,
+            visited,
+            new_has_fft,
+            new_has_dac,
+            memo,
+        );
         visited.remove(neighbor);
     }
 
@@ -65,14 +68,14 @@ fn dfs_with_memo(
     path_count
 }
 fn get_paths(input: &str) -> HashMap<&str, Vec<&str>> {
-    input.lines().map(
-        |line| {
+    input
+        .lines()
+        .map(|line| {
             let (from, gotos) = line.split(": ").collect_tuple().unwrap();
             (from, gotos.split_ascii_whitespace().collect())
-        }
-    ).collect()
+        })
+        .collect()
 }
-
 
 fn part1(input: &str) -> usize {
     let paths = get_paths(input);
@@ -83,17 +86,8 @@ fn part2(input: &str) -> usize {
     let paths = get_paths(input);
     let mut visited = HashSet::new();
     let mut memo = HashMap::new();
-    dfs_with_memo(
-        "svr", 
-        "out", 
-        &paths, 
-        &mut visited,
-        false,
-        false,
-        &mut memo,
-    )
+    dfs_with_memo("svr", "out", &paths, &mut visited, false, false, &mut memo)
 }
-
 
 #[cfg(test)]
 mod tests {
@@ -118,7 +112,7 @@ mod tests {
         };
         assert_eq!(part1(input), 5);
     }
-    
+
     #[test]
     fn test_part2() {
         let input = indoc! {
