@@ -18,55 +18,20 @@ fn dfs(current: &str, end: &str, paths: &HashMap<&str, Vec<&str>>) -> usize {
     total
 }
 
-fn dfs_with_memo(
-    current: &str,
-    end: &str,
-    graph: &HashMap<&str, Vec<&str>>,
-    visited: &mut HashSet<String>,
-    has_fft: bool,
-    has_dac: bool,
-    memo: &mut HashMap<(String, bool, bool, Vec<String>), usize>,
+fn get_or_insert(
+    node_ids: &mut HashMap<String, usize>,
+    adjs: &mut Vec<Vec<usize>>,
+    name: &str,
 ) -> usize {
-    if current == end {
-        return if has_fft && has_dac { 1 } else { 0 };
+    if let Some(&i) = node_ids.get(name) {
+        return i;
     }
-
-    let mut visited_vec: Vec<_> =
-        visited.iter().map(|s| s.to_string()).collect();
-    visited_vec.sort_unstable();
-    let key = (current.to_string(), has_fft, has_dac, visited_vec);
-
-    if let Some(&result) = memo.get(&key) {
-        return result;
-    }
-
-    let Some(neighbors) = graph.get(current) else {
-        return 0;
-    };
-
-    let mut path_count = 0;
-    for &neighbor in neighbors {
-        if visited.contains(neighbor) {
-            continue;
-        }
-        visited.insert(neighbor.into());
-        let new_has_fft = has_fft || neighbor == "fft";
-        let new_has_dac = has_dac || neighbor == "dac";
-        path_count += dfs_with_memo(
-            neighbor,
-            end,
-            graph,
-            visited,
-            new_has_fft,
-            new_has_dac,
-            memo,
-        );
-        visited.remove(neighbor);
-    }
-
-    memo.insert(key, path_count);
-    path_count
+    let id = adjs.len();
+    node_ids.insert(name.to_string(), id);
+    adjs.push(Vec::new());
+    id
 }
+
 fn get_paths(input: &str) -> HashMap<&str, Vec<&str>> {
     input
         .lines()
@@ -77,6 +42,63 @@ fn get_paths(input: &str) -> HashMap<&str, Vec<&str>> {
         .collect()
 }
 
+fn count_paths_dp_mask(
+    adj: &Vec<Vec<usize>>,
+    svr: usize,
+    out: usize,
+    dac: usize,
+    fft: usize,
+) -> usize {
+    let n = adj.len();
+    let mut memo: Vec<[Option<usize>; 4]> = vec![[None; 4]; n];
+
+    fn bit(u: usize, dac: usize, fft: usize) -> u8 {
+        let mut m = 0u8;
+        if u == dac {
+            m |= 1;
+        }
+        if u == fft {
+            m |= 2;
+        }
+        m
+    }
+
+    fn dfs(
+        u: usize,
+        out: usize,
+        dac: usize,
+        fft: usize,
+        mask: u8,
+        adj: &Vec<Vec<usize>>,
+        memo: &mut Vec<[Option<usize>; 4]>,
+    ) -> usize {
+        let mi = mask as usize;
+        if let Some(ans) = memo[u][mi] {
+            return ans;
+        }
+
+        let ans = if u == out {
+            if mask == 3 {
+                1
+            } else {
+                0
+            }
+        } else {
+            let mut total = 0;
+            for &v in &adj[u] {
+                total +=
+                    dfs(v, out, dac, fft, mask | bit(v, dac, fft), adj, memo);
+            }
+            total
+        };
+
+        memo[u][mi] = Some(ans);
+        ans
+    }
+
+    dfs(svr, out, dac, fft, bit(svr, dac, fft), adj, &mut memo)
+}
+
 fn part1(input: &str) -> usize {
     let paths = get_paths(input);
     dfs("you", "out", &paths)
@@ -84,9 +106,23 @@ fn part1(input: &str) -> usize {
 
 fn part2(input: &str) -> usize {
     let paths = get_paths(input);
-    let mut visited = HashSet::new();
-    let mut memo = HashMap::new();
-    dfs_with_memo("svr", "out", &paths, &mut visited, false, false, &mut memo)
+    let mut node_ids: HashMap<String, usize> = HashMap::new();
+    let mut adjs: Vec<Vec<usize>> = Vec::new();
+
+    for (name, neighbours) in paths {
+        let id = get_or_insert(&mut node_ids, &mut adjs, name);
+        for neighbour in neighbours {
+            let neighbour_id =
+                get_or_insert(&mut node_ids, &mut adjs, neighbour);
+            adjs[id].push(neighbour_id);
+        }
+    }
+    let svr = node_ids.get("svr").unwrap();
+    let out = node_ids.get("out").unwrap();
+    let fft = node_ids.get("fft").unwrap();
+    let dac = node_ids.get("dac").unwrap();
+
+    count_paths_dp_mask(&adjs, *svr, *out, *fft, *dac)
 }
 
 #[cfg(test)]
