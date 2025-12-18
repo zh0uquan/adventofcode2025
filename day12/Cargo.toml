@@ -1,0 +1,13 @@
+[package]
+name = "day12"
+version = "0.1.0"
+edition = "2021"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+indoc = { workspace = true }
+ndarray = "0.17.1"
+bitvec = "1.0.1"
+itertools = { workspace = true }
+good_lp = { version = "1", features = ["coin_cbc"] }
