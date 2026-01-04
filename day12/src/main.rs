@@ -1,15 +1,12 @@
-use bitvec::bitvec;
 use bitvec::order::Lsb0;
 use bitvec::vec::BitVec;
 use good_lp::{
     default_solver, variable, Expression, ProblemVariables, SolverModel,
     Variable,
 };
-use indoc::printdoc;
 use itertools::Itertools;
-use ndarray::{ArcArray2, Array2, ArrayView2, Axis, Slice};
+use ndarray::{Array2, ArrayView2, Axis, Slice};
 use std::collections::HashSet;
-use std::ops::BitAnd;
 
 fn main() {
     let input = include_str!("input.txt");
